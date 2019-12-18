@@ -3,9 +3,9 @@ import { Route, Redirect, Switch } from 'wouter'
 import { NestedRoutes } from '../../utils'
 import { List, Create, Edit } from '.'
 
-const ClubsRouter: React.FC = () => {
+const MatchesRouter: React.FC = () => {
   return (
-    <NestedRoutes path="/clubs">
+    <NestedRoutes path="/matches">
       <Switch>
         <Route path="/">
           <Redirect to="/list/1" />
@@ -14,7 +14,6 @@ const ClubsRouter: React.FC = () => {
           {({ page }) => <List page={parseInt(page)} />}
         </Route>
         <Route path="/create" component={Create} />
-        {/* <Route path="/:id/show">{params => `КЛУБ ${params.id}`}</Route> */}
         <Route path="/:id/edit" component={Edit} />
         <Route path="/:rest*">
           404, НИЧЕГО НЕ НАЙДЕНО{' '}
@@ -27,4 +26,4 @@ const ClubsRouter: React.FC = () => {
   )
 }
 
-export default ClubsRouter
+export default MatchesRouter

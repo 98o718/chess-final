@@ -1,7 +1,7 @@
-import ClubsRouter from './clubs-router'
+import SponsorsRouter from './sponsors-router'
 import List from './list'
 import Create from './create'
 import Edit from './edit'
 import Suggestion from './suggestion'
 
-export { ClubsRouter, List, Create, Edit, Suggestion }
+export { SponsorsRouter, List, Create, Edit, Suggestion }

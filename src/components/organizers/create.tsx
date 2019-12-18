@@ -8,16 +8,15 @@ import {
   Spinner,
   FormFeedback,
 } from 'reactstrap'
-import { Club } from './types'
-import { CLUBS_URL } from './constants'
+import { Organizer } from './types'
+import { ORGANIZERS_URL } from './constants'
 import { useLocation } from 'wouter'
 import { toast } from 'react-toastify'
 
 const Create: React.FC = () => {
-  const [club, setClub] = useState<Club>({
+  const [organizer, setOrganizer] = useState<Organizer>({
     id: '',
     name: '',
-    address: '',
   })
   const [creating, setCreating] = useState(false)
   const [, setLocation] = useLocation()
@@ -25,8 +24,8 @@ const Create: React.FC = () => {
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e) {
-      setClub(
-        Object.assign({}, club, {
+      setOrganizer(
+        Object.assign({}, organizer, {
           [e.target.name]: e.target.value,
         })
       )
@@ -35,14 +34,11 @@ const Create: React.FC = () => {
 
   const validate = useCallback(() => {
     let errors: string[] = []
-    if (!club.address.trim()) {
-      errors.push('address')
-    }
-    if (!club.name.trim()) {
+    if (!organizer.name.trim()) {
       errors.push('name')
     }
     return errors
-  }, [club])
+  }, [organizer])
 
   const isFirstRun = useRef(true)
 
@@ -53,24 +49,21 @@ const Create: React.FC = () => {
     }
 
     setErrors(validate())
-  }, [club, validate])
+  }, [organizer, validate])
 
   const handleSubmit = () => {
     if (validate().length === 0) {
       setCreating(true)
-      fetch(CLUBS_URL, {
+      fetch(ORGANIZERS_URL, {
         method: 'post',
         headers: {
           'Content-type': 'application/json; charset=UTF-8',
         },
-        body: JSON.stringify({
-          name: club.name.trim(),
-          address: club.address.trim(),
-        }),
+        body: JSON.stringify({ name: organizer.name.trim() }),
       })
         .then(r => {
           if (!r.ok) throw new Error('Ошибка создания!')
-          toast.success('Клуб создан!')
+          toast.success('Организатор создан!')
           setLocation('/list/1')
         })
         .catch(e => {
@@ -92,25 +85,16 @@ const Create: React.FC = () => {
           type="text"
           name="name"
           id="name"
+          spellCheck={false}
           invalid={errors.includes('name')}
-          placeholder="Шахматная школа Давида Бдояна"
-          value={club.name}
+          placeholder="CHESSSchool"
+          value={organizer.name}
           onChange={handleChange}
+          onKeyDown={e => {
+            if (e.key === 'Enter') e.preventDefault()
+          }}
         />
         <FormFeedback>Название не должно быть пустым</FormFeedback>
-      </FormGroup>
-      <FormGroup style={{ width: '100%' }}>
-        <Label for="address">Адрес</Label>
-        <Input
-          type="text"
-          name="address"
-          id="address"
-          invalid={errors.includes('address')}
-          placeholder="Волкова 5/5"
-          value={club.address}
-          onChange={handleChange}
-        />
-        <FormFeedback>Адрес не должен быть пустым</FormFeedback>
       </FormGroup>
       <Button
         color="success"

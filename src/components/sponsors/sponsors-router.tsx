@@ -3,9 +3,9 @@ import { Route, Redirect, Switch } from 'wouter'
 import { NestedRoutes } from '../../utils'
 import { List, Create, Edit } from '.'
 
-const ClubsRouter: React.FC = () => {
+const SponsorsRouter: React.FC = () => {
   return (
-    <NestedRoutes path="/clubs">
+    <NestedRoutes path="/sponsors">
       <Switch>
         <Route path="/">
           <Redirect to="/list/1" />
@@ -27,4 +27,4 @@ const ClubsRouter: React.FC = () => {
   )
 }
 
-export default ClubsRouter
+export default SponsorsRouter

@@ -5,5 +5,11 @@ export type Club = {
   players?: {
     id: string
     lastName: string
-  }
+  }[]
+}
+
+export type Player = {
+  id: string
+  lastName: string
+  firstName: string
 }

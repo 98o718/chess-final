@@ -14,10 +14,10 @@ const SkeletonGenerator: React.FC<skeletonGeneratorProps> = ({ x, y, h }) => {
   const tds = new Array(x).fill(1)
   return (
     <>
-      {trs.map(tr => (
-        <Tr>
-          {tds.map(td => (
-            <Td>
+      {trs.map((tr, idx) => (
+        <Tr key={idx}>
+          {tds.map((td, idx) => (
+            <Td key={idx}>
               <Skeleton height={height} />
             </Td>
           ))}

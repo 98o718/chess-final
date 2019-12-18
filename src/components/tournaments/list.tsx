@@ -5,31 +5,29 @@ import { Button, Spinner } from 'reactstrap'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faEdit, faTrash } from '@fortawesome/free-solid-svg-icons'
 import { useLocation } from 'wouter'
-import { Club } from './types'
-import { CLUBS_URL } from './constants'
+import { Tournament } from './types'
+import { TOURNAMENTS_URL, LIMIT, SORT } from './constants'
 import { toast } from 'react-toastify'
 import withQuery from 'with-query'
 import { Paginator, SkeletonGenerator } from '../../utils'
+import dayjs from 'dayjs'
 
 const List: React.FC<{ page: number }> = ({ page }) => {
   const [, setLocation] = useLocation()
-  const [clubs, setClubs] = useState<Club[]>([])
+  const [tournaments, setTournaments] = useState<Tournament[]>([])
   const [removing, setRemoving] = useState<string[]>([])
   const [totalPages, setTotalPages] = useState(page)
-
-  const limit = 5
-  const sort = 'id,DESC'
 
   useEffect(() => {
     if (isNaN(page)) {
       setLocation(`/list/1`)
     } else {
-      setClubs([])
+      setTournaments([])
       fetch(
-        withQuery(CLUBS_URL, {
-          limit,
+        withQuery(TOURNAMENTS_URL, {
+          limit: LIMIT,
           page,
-          sort,
+          sort: SORT,
         })
       )
         .then(r => {
@@ -37,7 +35,7 @@ const List: React.FC<{ page: number }> = ({ page }) => {
           return r.json()
         })
         .then(response => {
-          setClubs(response.data)
+          setTournaments(response.data)
           setTotalPages(response.pageCount)
           if (response.pageCount < page)
             setLocation(`/list/${response.pageCount}`)
@@ -46,18 +44,18 @@ const List: React.FC<{ page: number }> = ({ page }) => {
           toast.error(e.message)
         })
     }
-  }, [page, limit, setLocation])
+  }, [page, setLocation])
 
   const remove = (id: string) => {
     setRemoving(prev => prev.concat([id]))
-    fetch(`${CLUBS_URL}/${id}`, { method: 'delete' })
+    fetch(`${TOURNAMENTS_URL}/${id}`, { method: 'delete' })
       .then(r => {
         if (!r.ok) throw new Error('Ошибка удаления!')
         fetch(
-          withQuery(CLUBS_URL, {
-            limit,
+          withQuery(TOURNAMENTS_URL, {
+            limit: LIMIT,
             page,
-            sort,
+            sort: SORT,
           })
         )
           .then(r2 => {
@@ -66,8 +64,8 @@ const List: React.FC<{ page: number }> = ({ page }) => {
           })
           .then(response => {
             if (response.pageCount < page) setLocation(`/${response.pageCount}`)
-            setClubs(response.data)
-            toast.success('Клуб удален!')
+            setTournaments(response.data)
+            toast.success('Турнир удален!')
           })
       })
       .catch(e => {
@@ -89,22 +87,32 @@ const List: React.FC<{ page: number }> = ({ page }) => {
         <Thead>
           <Tr>
             <Th>Название</Th>
-            <Th>Адрес</Th>
+            <Th>Начало</Th>
+            <Th>Конец</Th>
+            <Th>Организатор</Th>
             <Th />
           </Tr>
         </Thead>
         <Tbody>
-          {clubs.length > 0 ? (
-            clubs.map(club => (
-              <Tr key={club.id}>
-                <Td style={{ paddingBottom: 30 }}>{club.name}</Td>
-                <Td style={{ paddingBottom: 30 }}>{club.address}</Td>
+          {tournaments.length > 0 ? (
+            tournaments.map(tournament => (
+              <Tr key={tournament.id}>
+                <Td style={{ paddingBottom: 30 }}>{tournament.name}</Td>
+                <Td style={{ paddingBottom: 30 }}>
+                  {dayjs(tournament.begin).format('DD.MM.YYYY')}
+                </Td>
+                <Td style={{ paddingBottom: 30 }}>
+                  {dayjs(tournament.end).format('DD.MM.YYYY')}
+                </Td>
+                <Td style={{ paddingBottom: 30 }}>
+                  {tournament.organizer && tournament.organizer.name}
+                </Td>
                 <Td align="right" style={{ paddingBottom: 30 }}>
                   <Button
                     className="d-inline-flex justify-content-center"
                     style={{ height: 40, marginRight: 5 }}
                     color="primary"
-                    onClick={() => setLocation(`/${club.id}/edit`)}
+                    onClick={() => setLocation(`/${tournament.id}/edit`)}
                   >
                     <FontAwesomeIcon icon={faEdit} />
                   </Button>
@@ -112,10 +120,10 @@ const List: React.FC<{ page: number }> = ({ page }) => {
                     className="d-inline-flex justify-content-center"
                     style={{ height: 40 }}
                     color="danger"
-                    onClick={() => remove(club.id)}
-                    disabled={removing.includes(club.id)}
+                    onClick={() => remove(tournament.id)}
+                    disabled={removing.includes(tournament.id)}
                   >
-                    {removing.includes(club.id) ? (
+                    {removing.includes(tournament.id) ? (
                       <Spinner
                         color="light"
                         style={{ width: 14, height: 14 }}
@@ -128,7 +136,7 @@ const List: React.FC<{ page: number }> = ({ page }) => {
               </Tr>
             ))
           ) : (
-            <SkeletonGenerator x={2} y={5} h={65} />
+            <SkeletonGenerator x={4} y={5} h={65} />
           )}
         </Tbody>
       </Table>

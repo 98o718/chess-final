@@ -8,27 +8,34 @@ import 'bootstrap/dist/css/bootstrap.min.css'
 
 import { Header } from '../header'
 import { ClubsRouter } from '../clubs'
+import { SponsorsRouter } from '../sponsors'
+import { OrganizersRouter } from '../organizers'
+import { PlayersRouter } from '../players'
+import { TournamentsRouter } from '../tournaments'
+import { MatchesRouter } from '../matches'
 
 const App: React.FC = () => {
   return (
     <>
       <Header />
-      <Container style={{ padding: 30 }}>
+      <Container
+        style={{ paddingTop: 30, paddingBottom: 30, maxWidth: '100%' }}
+      >
         <Row>
           <Col
             className="mx-auto d-flex flex-column align-items-center"
-            style={{ maxWidth: '80%' }}
+            style={{ maxWidth: '100%' }}
           >
             <Route path="/">
               <Redirect to="/clubs" />
             </Route>
 
             <ClubsRouter />
-            <Route path="/players">ИГРОКИ</Route>
-            <Route path="/sponsors">СПОНСОРЫ</Route>
-            <Route path="/organizers">ОРГАНИЗАТОРЫ</Route>
-            <Route path="/tournaments">ТУРНИРЫ</Route>
-            <Route path="/matches">МАТЧИ</Route>
+            <PlayersRouter />
+            <SponsorsRouter />
+            <OrganizersRouter />
+            <TournamentsRouter />
+            <MatchesRouter />
           </Col>
         </Row>
       </Container>
